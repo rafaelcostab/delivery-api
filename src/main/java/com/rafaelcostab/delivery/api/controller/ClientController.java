@@ -1,26 +1,25 @@
 package com.rafaelcostab.delivery.api.controller;
 
-import java.util.Arrays;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import domain.model.Client;
+import com.rafaelcostab.delivery.domain.model.Client;
 
 @RestController
 public class ClientController {
 
+	@PersistenceContext
+	private EntityManager manager;
+	
 	@GetMapping("/clients")
 	public List<Client>find() {
-		Client client = new Client();
-		
-		client.setId(1L);
-		client.setName("Rafael Costa");
-		client.setEmail("rafael.costab@hotmail.com");
-		client.setPhone("11 92233-4455");
-		
-		return Arrays.asList(client);
+		return manager.createQuery("from Client", Client.class)
+				.getResultList();
 	}
 	
 }
