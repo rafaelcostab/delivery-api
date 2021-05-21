@@ -39,4 +39,9 @@ public class ClientService {
 		clientRepository.deleteById(clientId);
 	}
 	
+	public Client findById(Long clientId) {
+		return clientRepository.findById(clientId)
+				.orElseThrow(() -> new BusinessException("Cliente não encontrado"));
+	}
+	
 }
