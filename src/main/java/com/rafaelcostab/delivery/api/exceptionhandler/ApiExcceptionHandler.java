@@ -13,8 +13,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.rafaelcostab.delivery.domain.exception.BusinessException;
 
 import lombok.AllArgsConstructor;
 
@@ -45,6 +48,19 @@ public class ApiExcceptionHandler extends ResponseEntityExceptionHandler{
 		mistake.setDescription("Há campo(s) inválido(s)!");
 		mistake.setFields(fields);
 		 
-		return super.handleExceptionInternal(ex, mistake, headers, status, request);
+		return handleExceptionInternal(ex, mistake, headers, status, request);
+	}
+	
+	@ExceptionHandler(BusinessException.class)
+	public ResponseEntity<Object> handleBusiness(BusinessException ex, WebRequest request){
+		
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		Mistake mistake = new Mistake();
+		mistake.setStatus(status.value());
+		mistake.setWhenOccurred(LocalDateTime.now());
+		mistake.setDescription(ex.getMessage());
+				
+		return handleExceptionInternal(ex, mistake, new HttpHeaders(), status, request);
 	}
 }
