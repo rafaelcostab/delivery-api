@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rafaelcostab.delivery.api.model.DeliveryModel;
+import com.rafaelcostab.delivery.api.model.RecipientModel;
 import com.rafaelcostab.delivery.domain.model.Delivery;
 import com.rafaelcostab.delivery.domain.repository.DeliveryRepository;
 import com.rafaelcostab.delivery.domain.service.DeliveryOrderService;
@@ -40,9 +42,27 @@ public class DeliveryController {
 	}
 	
 	@GetMapping("/{deliveryId}")
-	public ResponseEntity<Delivery> find(@PathVariable Long deliveryId){
+	public ResponseEntity<DeliveryModel> find(@PathVariable Long deliveryId){
 		return deliveryRepository.findById(deliveryId)
-				.map(ResponseEntity::ok)
+				.map(delivery -> {
+					DeliveryModel model = new DeliveryModel();
+					model.setId(delivery.getId());
+					model.setClientName(delivery.getClient().getName());
+
+					model.setRecipient(new RecipientModel());
+					model.getRecipient().setName(delivery.getRecipient().getName());
+					model.getRecipient().setAdress(delivery.getRecipient().getAdress());
+					model.getRecipient().setNumber(delivery.getRecipient().getNumber());
+					model.getRecipient().setComplement(delivery.getRecipient().getComplement());
+					model.getRecipient().setNeighborhood(delivery.getRecipient().getNeighborhood());
+					
+					model.setTax(delivery.getTax());
+					model.setStatus(delivery.getStatus());
+					model.setDateOrder(delivery.getDateOrder());
+					model.setDateFinished(delivery.getDateFinished());
+					
+					return ResponseEntity.ok(model);
+				})
 				.orElse(ResponseEntity.notFound().build());
 	}
 	
