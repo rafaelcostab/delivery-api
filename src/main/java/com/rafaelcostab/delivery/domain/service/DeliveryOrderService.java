@@ -1,6 +1,6 @@
 package com.rafaelcostab.delivery.domain.service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.transaction.Transactional;
 
@@ -27,7 +27,7 @@ public class DeliveryOrderService {
 		
 		delivery.setClient(client);
 		delivery.setStatus(DeliveryStatus.PENDING);
-		delivery.setDateOrder(LocalDateTime.now());
+		delivery.setDateOrder(OffsetDateTime.now());
 		
 		return deliveryRepository.save(delivery);
 	}

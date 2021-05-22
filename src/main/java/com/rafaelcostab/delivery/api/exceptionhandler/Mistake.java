@@ -1,6 +1,6 @@
 package com.rafaelcostab.delivery.api.exceptionhandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,8 +14,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Mistake {
+	
 	private Integer status;
-	private LocalDateTime whenOccurred;
+	private OffsetDateTime whenOccurred;
 	private String description;
 	private List<field> fields;
 	

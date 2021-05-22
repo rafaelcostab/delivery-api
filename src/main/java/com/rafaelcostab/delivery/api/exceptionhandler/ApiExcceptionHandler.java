@@ -1,6 +1,6 @@
 package com.rafaelcostab.delivery.api.exceptionhandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class ApiExcceptionHandler extends ResponseEntityExceptionHandler{
 		
 		Mistake mistake = new Mistake();
 		mistake.setStatus(status.value());
-		mistake.setWhenOccurred(LocalDateTime.now());
+		mistake.setWhenOccurred(OffsetDateTime.now());
 		mistake.setDescription("Há campo(s) inválido(s)!");
 		mistake.setFields(fields);
 		 
@@ -58,7 +58,7 @@ public class ApiExcceptionHandler extends ResponseEntityExceptionHandler{
 		
 		Mistake mistake = new Mistake();
 		mistake.setStatus(status.value());
-		mistake.setWhenOccurred(LocalDateTime.now());
+		mistake.setWhenOccurred(OffsetDateTime.now());
 		mistake.setDescription(ex.getMessage());
 				
 		return handleExceptionInternal(ex, mistake, new HttpHeaders(), status, request);
