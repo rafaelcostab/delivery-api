@@ -23,7 +23,6 @@ import lombok.Setter;
 @Table(name="clients")
 public class Client {
 
-	@NotNull(groups = ValidationGroups.ClientId.class)
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
