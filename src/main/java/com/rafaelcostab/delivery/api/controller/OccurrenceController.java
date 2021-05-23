@@ -19,7 +19,7 @@ import com.rafaelcostab.delivery.api.model.input.OccurrenceInput;
 import com.rafaelcostab.delivery.domain.model.Delivery;
 import com.rafaelcostab.delivery.domain.model.Occurrence;
 import com.rafaelcostab.delivery.domain.service.DeliverySearchService;
-import com.rafaelcostab.delivery.domain.service.RegisterOccurrenceService;
+import com.rafaelcostab.delivery.domain.service.OccurrenceRegisterService;
 
 import lombok.AllArgsConstructor;
 
@@ -29,14 +29,14 @@ import lombok.AllArgsConstructor;
 public class OccurrenceController {
 
 	private DeliverySearchService deliverySearchService;
-	private RegisterOccurrenceService registerOcurrenceService;
+	private OccurrenceRegisterService ocurrenceRegisterService;
 	private OccurrenceAssembler occurrenceAssembler;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public OccurrenceModel register(@PathVariable Long deliveryId,
 			@Valid @RequestBody OccurrenceInput occurrenceInput) {
-		Occurrence ocurrenceRegisted = registerOcurrenceService
+		Occurrence ocurrenceRegisted = ocurrenceRegisterService
 				.register(deliveryId, occurrenceInput.getDescription());
 		
 		return occurrenceAssembler.toModel(ocurrenceRegisted);
@@ -49,4 +49,5 @@ public class OccurrenceController {
 		
 		return occurrenceAssembler.toCollectionModel(delivery.getOccurrences());
 	}
+	
 }

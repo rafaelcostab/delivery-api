@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.rafaelcostab.delivery.domain.exception.BusinessException;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,6 +62,24 @@ public class Delivery {
 		this.getOccurrences().add(occurrence);
 		
 		return occurrence;
+	}
+
+	public void finish() {
+		
+		if (cannotBeFinalized()) {
+			throw new BusinessException("Entrega não pode ser finalizada");
+		}
+		
+		setStatus(DeliveryStatus.FINISHED);
+		setDateFinished(OffsetDateTime.now());
+	}
+
+	public boolean canBeFinalized() {
+		return DeliveryStatus.PENDING.equals(getStatus());
+	}
+	
+	public boolean cannotBeFinalized() {
+		return !canBeFinalized();
 	}
 	
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,6 +20,7 @@ import com.rafaelcostab.delivery.api.model.DeliveryModel;
 import com.rafaelcostab.delivery.api.model.input.DeliveryInput;
 import com.rafaelcostab.delivery.domain.model.Delivery;
 import com.rafaelcostab.delivery.domain.repository.DeliveryRepository;
+import com.rafaelcostab.delivery.domain.service.DeliveryCompletionService;
 import com.rafaelcostab.delivery.domain.service.DeliveryOrderService;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +33,7 @@ public class DeliveryController {
 	private DeliveryRepository deliveryRepository;
 	private DeliveryOrderService deliveryOrderService;
 	private DeliveryAssembler deliveryAssembler;
+	private DeliveryCompletionService deliveryCompletionService;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -54,4 +57,9 @@ public class DeliveryController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 	
+	@PutMapping("/{deliveryId}/finish")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void finish(@PathVariable Long deliveryId) {
+		deliveryCompletionService.finish(deliveryId);
+	}
 }

@@ -5,21 +5,25 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.rafaelcostab.delivery.domain.model.Delivery;
-import com.rafaelcostab.delivery.domain.model.Occurrence;
+import com.rafaelcostab.delivery.domain.repository.DeliveryRepository;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class RegisterOccurrenceService {
+public class DeliveryCompletionService {
 
-	private DeliverySearchService deliverySearchService;
+	DeliverySearchService deliverySearchService;
+	DeliveryRepository deliveryRepository;
+	
 	
 	@Transactional
-	public Occurrence register(Long deliveryId, String description)  {
+	public void finish(Long deliveryId) {
 		Delivery delivery = deliverySearchService.find(deliveryId);
 		
-		return delivery.addOccurrence(description);
+		delivery.finish();
+		
+		deliveryRepository.save(delivery);
 	}
 	
 }
