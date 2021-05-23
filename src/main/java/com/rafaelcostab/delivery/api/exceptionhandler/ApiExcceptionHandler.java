@@ -1,4 +1,4 @@
-package com.rafaelcostab.delivery.api.exceptionhandler;
+ package com.rafaelcostab.delivery.api.exceptionhandler;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.rafaelcostab.delivery.domain.exception.BusinessException;
+import com.rafaelcostab.delivery.domain.exception.EntityNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -49,6 +50,19 @@ public class ApiExcceptionHandler extends ResponseEntityExceptionHandler{
 		mistake.setFields(fields);
 		 
 		return handleExceptionInternal(ex, mistake, headers, status, request);
+	}
+	
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<Object> handleBusiness(EntityNotFoundException ex, WebRequest request){
+		
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		
+		Mistake mistake = new Mistake();
+		mistake.setStatus(status.value());
+		mistake.setWhenOccurred(OffsetDateTime.now());
+		mistake.setDescription(ex.getMessage());
+				
+		return handleExceptionInternal(ex, mistake, new HttpHeaders(), status, request);
 	}
 	
 	@ExceptionHandler(BusinessException.class)

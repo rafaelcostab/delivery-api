@@ -2,7 +2,10 @@ package com.rafaelcostab.delivery.domain.model;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,16 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.Valid;
-import javax.validation.groups.ConvertGroup;
-import javax.validation.groups.Default;
-
-import com.rafaelcostab.delivery.domain.ValidationGroups;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,6 +40,9 @@ public class Delivery {
 	private Recipient recipient;
 	
 	private BigDecimal tax;
+
+	@OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
+	private List<Occurrence> occurrences = new ArrayList<>();
 	
 	@Enumerated(EnumType.STRING)
 	private DeliveryStatus status;
@@ -52,5 +50,16 @@ public class Delivery {
 	private OffsetDateTime dateOrder;
 	
 	private OffsetDateTime dateFinished;
+
+	public Occurrence addOccurrence(String description) {
+		Occurrence occurrence = new Occurrence();
+		occurrence.setDescription(description);
+		occurrence.setDateRegister(OffsetDateTime.now());
+		occurrence.setDelivery(this);
+		
+		this.getOccurrences().add(occurrence);
+		
+		return occurrence;
+	}
 	
 }
