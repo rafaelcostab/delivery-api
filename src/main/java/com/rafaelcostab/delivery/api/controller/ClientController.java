@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rafaelcostab.delivery.api.assembler.ClientAssembler;
+import com.rafaelcostab.delivery.api.model.ClientModel;
+import com.rafaelcostab.delivery.api.model.input.ClientInput;
 import com.rafaelcostab.delivery.domain.model.Client;
 import com.rafaelcostab.delivery.domain.repository.ClientRepository;
 import com.rafaelcostab.delivery.domain.service.ClientService;
@@ -29,35 +32,41 @@ public class ClientController {
 
 	private ClientRepository clientRepository;
 	private ClientService clientService; 
+	private ClientAssembler clientAssembler;
 	
 	@GetMapping
-	public List<Client>find() {
-		return clientRepository.findAll();
+	public List<ClientModel>find() {
+		return clientAssembler.toEntity(clientRepository.findAll());
 	}
 	
 	@GetMapping("/{clientId}")
-	public ResponseEntity<Client> findById(@PathVariable Long clientId) {
+	public ResponseEntity<ClientModel> findById(@PathVariable Long clientId) {
 		return clientRepository.findById(clientId)
-			.map(ResponseEntity::ok)
+			.map(client -> ResponseEntity.ok(clientAssembler.toModel(client)))
 			.orElse(ResponseEntity.notFound().build());
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Client add(@Valid @RequestBody Client client) {
-		return clientService.save(client);
+	public ClientModel add(@Valid @RequestBody ClientInput clientInput) {
+		Client newClient = clientAssembler.toEntity(clientInput);
+		
+		Client clientRegisted = clientService.save(newClient);
+		
+		return clientAssembler.toModel(clientRegisted);
 	}
 	
-	@PutMapping("/{clientId}")
-	public ResponseEntity<Client> update (@PathVariable Long clientId, @Valid @RequestBody Client client){
-		if (!clientRepository.existsById(clientId)) {
+	@PutMapping("/update")
+	public ResponseEntity<ClientModel> update (@Valid @RequestBody ClientInput clientInput){
+		if (!clientRepository.existsById(clientInput.getId())) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		client.setId(clientId);
-		client = clientService.save(client);
+		Client client = clientAssembler.toEntity(clientInput);
+		
+		Client clientUpdated = clientService.save(client);
 	
-		return ResponseEntity.ok(client);
+		return ResponseEntity.ok(clientAssembler.toModel(clientUpdated));
 	}
 	
 	@DeleteMapping("/{clientId}")
